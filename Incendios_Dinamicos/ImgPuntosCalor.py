@@ -1,0 +1,103 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Feb  1 13:29:32 2019
+
+@author: lanot
+"""
+import matplotlib
+matplotlib.use('Agg')
+import dataPuntosCalor,dataGOES16,dataSuomiNPP,dataSentinel2
+
+import GOES16,SuomiNPP,Sentinel2
+
+import ensamble
+
+#import numpy as np
+
+import os
+
+dataGOES16.borraTodo()
+dataSuomiNPP.borraTodo()
+dataSentinel2.borraTodo()
+
+path = '/home/lanot/Documents/Scripts_Tesis/Scripts_Tesis/Incendios_Dinamicos/'
+
+pathPuntosCalor = path+'data_PuntosCalor/'
+pathGOES16 = path+'data_GOES16/'
+pathSuomiNPP = path+'data_SuomiNPP/'
+pathSentinel2 = path+'data_Sentinel2/'
+
+os.system('mv /var/www/html/incendios/* /home/lanot/Documents/IncendiosIma')
+csv,puntos,coordenadas,csvArchivo,fechaPC,puntos,puntosMexico = dataPuntosCalor.PuntosCalor(pathPuntosCalor)
+    
+info = 'Archivo CSV: '+csvArchivo+'\n'+'Fecha CSV: '+fechaPC+'\n'+'Puntos de Calor detectados: ',str(puntos),'\n'+'Puntos de Calor detectados Mexico: ',str(puntosMexico),'\n'+'\n'+'\n'+'lon,lat,tmpFinPC'
+infoArchivo = open('/var/www/html/incendios/info_'+csvArchivo[:-3]+'txt','a')
+infoArchivo.writelines(info)
+
+if len(coordenadas['lon']) == 0:
+    
+    print(csv)
+    print ("No se detectaron incendios ")
+    infoArchivo.write('\nNo se detectaron incendios ')
+    infoArchivo.close()
+else:
+    infoArchivo.close()       
+    dataPuntosCalor.plotPuntos(coordenadas['lon'],coordenadas['lat'])
+    
+    dataGOES16.extraeNetCDF()
+    dataSuomiNPP.extraeGTiff()
+    #os.system('mv /var/www/html/incendios/* /home/lanot/Documents/IncendiosIma')
+    
+    for x,y,tmpPC in zip(coordenadas['lon'],coordenadas['lat'],coordenadas['tmpFin']):
+        
+        try: 
+            
+            print "\nProcesando Coordenada: ",x,',',y
+            infoArchivo = open('/var/www/html/incendios/info_'+csvArchivo[:-3]+'txt','a')
+    
+            offsetGOES16 = 1
+            offsetSuomiNPP = 0.5
+            offsetSentinel2 = 0.1
+            
+            dataSentinel2.extraeWMS(x,y,offsetSentinel2,'1-NATURAL-COLOR,DATE','TC_',pathSentinel2,'TC')
+            dataSentinel2.extraeWMS(x,y,offsetSentinel2,'2_COLOR_INFRARED__VEGETATION_,DATE','SWIR_',pathSentinel2,'SWIR')
+            
+            G16_TC_imagen,G16_FT_imagen = GOES16.RGBGoes16(pathGOES16,x,y,offsetGOES16)
+            SNPP_TC_imagen,SNPP_FT_imagen,paso = SuomiNPP.RGBSuomiNPPI(pathSuomiNPP,x,y,offsetSuomiNPP)
+            Sen2_TC_imagen = Sentinel2.RGBSentilen2(x,y,offsetSentinel2,'TC',pathSentinel2,'Sentinel2_TC_')
+            Sen2_SWIR_imagen = Sentinel2.RGBSentilen2(x,y,offsetSentinel2,'SWIR',pathSentinel2,'Sentinel2_SWIR_')
+            
+            fechaG16 = dataGOES16.revisaNetCDF('1')
+            if paso == 1:        
+                fechaSNPP = dataSuomiNPP.revisaGTif('03','19')
+            else:
+                fechaSNPP = dataSuomiNPP.revisaGTif('03','18')
+            
+            logo_path = 'logo.jpg'
+            ubiMun_path = 'ubicacion_muni.png'
+            ubiEnt_path = 'ubicacion_edo.png'
+            ensamble.ensambleSat(x,y,G16_TC_imagen,G16_FT_imagen,SNPP_TC_imagen,SNPP_FT_imagen,Sen2_TC_imagen,Sen2_SWIR_imagen,ubiMun_path,ubiEnt_path,logo_path,tmpPC,fechaG16,fechaSNPP)
+            
+            infoArchivo.write('\n'+str(x)+','+str(y)+','+str(tmpPC))
+            infoArchivo.close()
+    
+            
+            os.remove(G16_TC_imagen)
+            os.remove(G16_FT_imagen)
+            os.remove(SNPP_TC_imagen)
+            os.remove(SNPP_FT_imagen)
+            os.remove(Sen2_TC_imagen)
+            os.remove(Sen2_SWIR_imagen)
+            os.remove('ubicacion_edo.png')
+            os.remove('ubicacion_muni.png')
+            os.remove('tmp_rec.tif.aux.xml')
+            os.remove('tmp_4326_rec.tif.aux.xml')
+                            
+        except:
+            print ("Incendio fuera de rango")
+    
+    dataGOES16.borraTodo()
+    dataSuomiNPP.borraTodo()
+    dataSentinel2.borraTodo()
+#infoArchivo.close()
