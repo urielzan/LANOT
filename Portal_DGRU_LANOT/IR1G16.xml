@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StyledLayerDescriptor version="1.0.0" xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd">
+  <NamedLayer>
+    <Name>IR1G16</Name>
+    <UserStyle>
+      <Name>IR1G16</Name>
+      <Title>Rain distribution</Title>
+      <FeatureTypeStyle>
+        <Rule>
+          <RasterSymbolizer>
+            <Opacity>0.65</Opacity>
+            <ColorMap>
+              <ColorMapEntry color="#fbbfdc" quantity="-110" opacity="0" />
+              <ColorMapEntry color="#fbbfdc" quantity="-105" opacity="0.75"/>
+              <ColorMapEntry color="#f470e9" quantity="-100" opacity="0.75"/>
+              <ColorMapEntry color="#ff0d82" quantity="-95" opacity="0.75"/>
+              <ColorMapEntry color="#ff0a22" quantity="-90" opacity="0.75"/>
+              <ColorMapEntry color="#ff6243" quantity="-85" opacity="0.75"/>
+              <ColorMapEntry color="#ff6243" quantity="-80" opacity="0.75"/>
+              <ColorMapEntry color="#c5301d" quantity="-75" opacity="0.75"/>
+              <ColorMapEntry color="#c5301d" quantity="-70" opacity="0.75"/>
+              <ColorMapEntry color="#ffa331" quantity="-65" opacity="0.75"/>
+              <ColorMapEntry color="#ffa331" quantity="-60" opacity="0.75"/>
+              <ColorMapEntry color="#ffff41" quantity="-55" opacity="0.75"/>
+              <ColorMapEntry color="#ffff41" quantity="-50" opacity="0.75"/>
+              <ColorMapEntry color="#00c460" quantity="-45" opacity="0.75"/>
+              <ColorMapEntry color="#00ff3a" quantity="-40" opacity="0.75"/>
+              <ColorMapEntry color="#00ff3a" quantity="-35" opacity="0.75"/>
+              <ColorMapEntry color="#00fffe" quantity="-30" opacity="0.75"/>
+              <ColorMapEntry color="#00fffe" quantity="-25" opacity="0.75"/>
+              <ColorMapEntry color="#006eda" quantity="-20" opacity="0.75"/>
+              <ColorMapEntry color="#006eda" quantity="-15" opacity="0.75"/>
+              <ColorMapEntry color="#0012f9" quantity="-10" opacity="0.75"/>
+              <ColorMapEntry color="#0012f9" quantity="-5"  opacity="0.75"/>
+              <ColorMapEntry color="#0012f9" quantity="0"  opacity="0"/>
+            </ColorMap>
+          </RasterSymbolizer>
+        </Rule>
+      </FeatureTypeStyle>
+    </UserStyle>
+  </NamedLayer>
+</StyledLayerDescriptor>

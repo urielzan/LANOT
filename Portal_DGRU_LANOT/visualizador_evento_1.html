@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+     <html>
+          <head>
+          	
+          	<title>Visualizador_Evento</title>
+
+          	<meta charset="utf-8" />
+          	<meta name="viewport" content="width=device-width, initial-scale=1.0">	
+          	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+               <!-- LEAFLET 1.5.1 -->
+               <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+               <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+               <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js"></script>-->
+               
+               <!-- Pluging TImeDimension Leaflet animacion -->
+               <link rel="stylesheet" href="leaflet.timedimension.control.min.css" />
+               <script type="text/javascript" src="iso8601.min.js"></script>
+               <script type="text/javascript" src="leaflet.timedimension.min.js"></script>      
+
+               <!-- Load Esri Leaflet from CDN -->
+               <script src="https://unpkg.com/esri-leaflet"></script>
+               <!-- Esri Leaflet Geocoder -->
+               <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css">
+               <script src="https://unpkg.com/esri-leaflet-geocoder"></script>
+
+               <style>
+                    .mapa_clase{
+                         position: absolute; 
+                         width: 100%; 
+                         height: 100%; 
+                         top: 0; 
+                         left: 0;
+                    }
+
+                    /* customize look of leaflet zoom controls */
+                    .leaflet-bar{
+                      box-shadow: none;
+                    }
+                    .leaflet-control-zoom a{
+                      box-shadow: 0 1px 5px rgba(0,0,0,0.65); 
+                    }
+                    .leaflet-bar a{
+                      border-radius: 4px;
+                      background-color: #1fa4f1;
+                      border: 1px solid rgba(0,0,0,.15);
+                      color: #FFFFFF;
+                    }
+                    .leaflet-bar a:last-child{
+                      border: 1px solid rgba(0,0,0,.15);
+                    }
+                    .leaflet-bar a:hover{
+                      background-color: #FFFFFF;
+                      border: 1px solid rgba(0,0,0,.15);
+                      color: #1fa4f1;
+                    }
+                    .leaflet-control-zoom-in{
+                      margin-top: 10px;
+                    }
+                    .leaflet-control-zoom-out{
+                      margin-top: 15px;
+                    }
+
+                    /* layer control style */
+
+                    .leaflet-control-layers-toggle:after{ 
+                        content:"Capas"; 
+                        color:#000 ;
+                    }
+                    .leaflet-control-layers-toggle{ 
+                        color: #1fa4f1; 
+                        width:auto;
+                        background-position:3px 50% ;
+                        padding:3px;
+                        padding-left:36px;
+                        text-decoration:none;
+                        line-height:36px;
+
+                    }
+
+                    .leaflet-top.leaflet-right .leaftlet-control-layers:nth-child(3) .leaflet-control-layers-toggle {
+                        background-image: "lanot_logo.png";
+                    }
+
+               </style>
+
+          </head>
+          <body>
+
+               <div id="map" class="mapa_clase"></div>      
+               <script type="text/javascript" src="animacion.js"></script>         
+
+          </body>
+     </html>

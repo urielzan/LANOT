@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <title>Quick Start - Leaflet</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.control.min.css" />
+    <script type="text/javascript" src="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/nezasa/iso8601-js-period/master/iso8601.min.js"></script>
+    <script type="text/javascript" src="animacion.js"></script>
+
+<style>
+#logoContainer {
+    position: relative;
+    z-index: 5;
+    top: 15px;
+    left: 15px;
+}
+.myClass {
+   position: absolute;}
+
+</style>
+    
+</head>
+<body>
+
+
+
+<div id="mapid" style="width:1600px; height: 1400px; z-index: 0;"></div>
+
+
+<script>
+
+    var mymap = L.map('mapid',{
+        zoom: 5,
+    fullscreenControl: true,
+    timeDimension: true,
+    timeDimensionOptions:{
+        //times : t,
+        timeInterval: "2017-09-05 00:00:00/2017-09-09 00:00:00",
+        period: "PT1H",
+    },
+    timeDimensionControl: true,
+    timeDimensionControlOptions:{
+        autoPlay: true,       
+        loopButton: true,
+        playerOptions: {            
+            loop: true,
+        }       
+        //timeSteps: 1,
+    },    
+    center: [19.9,-99.0],
+    }).setView([51.505, -0.09], 13);
+
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox.streets'
+    }).addTo(mymap);
+
+    var logo= L.control({
+        position : 'topright'
+    });
+
+    logo.onAdd = function(mymap) {
+        this._div = L.DomUtil.create('div', 'myControl');
+        var img_log = "<div><img src=\"lanot_logo_b.png\"></img></div>";
+
+        this._div.innerHTML = img_log;
+        return this._div;
+
+    }
+    logo.addTo(mymap);
+
+
+var proxy = 'server/proxy.php';
+var testWMS = "http://132.247.103.145:8080/geoserver/wms?SERVICE=WMS&"
+
+var testLayer = L.tileLayer.wms(testWMS, {
+    layers: 'cite:katia',
+    format: 'image/png',
+    transparent: true,
+    //attribution: '<a href="https://www.pik-potsdam.de/">PIK</a>'
+});
+
+
+var testLayer_tra = L.tileLayer.wms(testWMS, {
+    layers: 'cite:katia_tra',
+    format: 'image/png',
+    transparent: true,
+    //attribution: '<a href="https://www.pik-potsdam.de/">PIK</a>'
+});
+
+var testTimeLayer = L.timeDimension.layer.wms(testLayer,{updateTimeDimension: true}, {proxy: proxy});
+testTimeLayer.addTo(mymap);
+
+var testTimeLayer_tra = L.timeDimension.layer.wms(testLayer_tra,{updateTimeDimension: true}, {proxy: proxy});
+testTimeLayer_tra.addTo(mymap);
+
+
+</script>
+
+
+
+</body>
+</html>
