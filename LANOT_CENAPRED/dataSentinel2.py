@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Nov 20 11:12:47 2019
-
 @author: urielm
 """
 
@@ -68,12 +67,12 @@ def extraeWMS(x,y,offset,LAYERS,salida,path,RGB):
         url = 'https://services.sentinel-hub.com/ogc/wms/eadcc3e9-e764-4af4-9d3a-e191528a5262?SERVICE=WMS&REQUEST=GetMap&MAXCC='+MAXCC+'&LAYERS='+LAYERS+'&CLOUDCORRECTION=none&EVALSOURCE=S2&TEMPORAL=false&WIDTH=1000&HEIGHT=1000&ATMFILTER=ATMCOR&FORMAT=image/jpeg&NICENAME=Sentinel-2+image+on+'+TIME+'.jpg&TIME=2015-01-01/'+TIME+'&BBOX='+BBOX
         
     r = requests.get(url)    
-    code = open(salida+str(x)+"_"+str(y)+".jpg", "wb")
+    code = open(path+'/'+salida+str(x)+"_"+str(y)+".jpg", "wb")
     code.write(r.content)
     code = None
 
-    return 
-
+    return salida+str(x)+"_"+str(y)+".jpg"
+'''
 lat = 19.02
 lon = -98.63
 offset = 0.05
@@ -83,5 +82,5 @@ extraeWMS(lon,lat,offset,'1-NATURAL-COLOR,DATE','TC_',path,'TC')
 extraeWMS(lon,lat,offset,'2_COLOR_INFRARED__VEGETATION_,DATE','FC_',path,'FC')
 extraeWMS(lon,lat,offset,'91_SWIR,DATE','SWIR_',path,'SWIR')
 extraeWMS(lon,lat,offset,'5_VEGETATION_INDEX,DATE','NDVI_',path,'NDVI')
-
+'''
 #borraTodo()
