@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://d19vzq90twjlae.cloudfront.net/leaflet-0.7.3/leaflet.css" />
+<script src="https://d19vzq90twjlae.cloudfront.net/leaflet-0.7.3/leaflet.js"></script>
+<style>
+
+ #map{ 
+ 	width: 600px; 
+ 	height: 400px;
+ 	 }
+ .image{ 
+ 	position: absolute;
+  	left: 50%;
+  	top: 0px;
+ 	width: 600px; 
+ 	height: 600px
+ 	 }
+
+</style>
+</head>
+<body bgcolor="#444444">
+
+<div>
+<div id="map"></div>
+
+<form method="post" action="/">
+	<p>Longitud: <input type="number" step="any" name ="lon" id="lon" value="lon"></p>
+	<p>Latitud: <input type="number" step="any" name ="lat" id="lat" values="lat"></p>
+	  
+ 
+  <p>
+    <input type="submit" id="send-signup" name="signup" value="Enviar">
+  </p>
+</form>
+
+<img class = 'image' src="static/{{image}}" >
+
+<div>
+
+  <script>
+
+  // initialize the map
+  var map = L.map('map').setView([19, -99], 5);
+
+  // load a tile layer
+var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+var lat;
+var lon;
+
+function clickEvent(e) {
+
+        if (typeof(newMarker)==='undefined'){
+            newMarker = new L.marker(e.latlng, { draggable: true });
+            newMarker.addTo(map);}
+        else { newMarker.setLatLng(e.latlng);}
+
+
+        lat = e.latlng.lat;
+        lon = e.latlng.lng;
+        document.getElementById("lat").value = lat;
+        document.getElementById("lon").value = lon;
+        console.log(lat + " Inside");
+        now();
+}
+
+map.on('click', clickEvent);
+console.log(lat + " Global");
+
+function now(){
+    console.log(lat + " Global after click");
+}
+
+  </script>
+</body>
+</html>
