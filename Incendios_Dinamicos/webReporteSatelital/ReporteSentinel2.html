@@ -1,0 +1,379 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="static/pace.js"></script>
+<link href="static/pace-theme-loading-bar.css" rel="stylesheet" />
+<style>
+
+#map{ 
+  width: 700px; 
+  height: 500px;
+  position: absolute;
+  top: 20%;
+  left: 10%;
+  z-index: 0;
+}
+
+.form{
+  position: absolute;
+  left: 70%;
+  top: 20%;
+  width: 600px; 
+  height: 600px;
+}
+
+.image{ 
+  position: absolute;
+  left: 0%;
+  top: 40%;
+  width: 400px; 
+  height: 225px;
+}
+
+.image_1{ 
+  position: absolute;
+  left: 0%;
+  top: 40%;
+  width: 250px; 
+  height: 250px;
+}
+
+.logos{
+  margin: auto;
+  width: 140px; 
+  height: 40px;
+}
+
+.header {
+  overflow: hidden;
+  background-color: #f1f1f1;
+  padding: 20px 10px;
+}
+
+.header a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px; 
+  line-height: 25px;
+  border-radius: 4px;
+}
+
+.header a.logo {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.header a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.header a.active {
+  background-color: dodgerblue;
+  color: white;
+}
+
+.header-right {
+  float: right;
+}
+
+.header-left {
+  float: left;
+}
+@media screen and (max-width: 500px) {
+  .header a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+  
+  .header-right {
+    float: none;
+  }
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.button:hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.btn {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  padding: 12px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Darker background on mouse-over */
+.btn:hover {
+  background-color: RoyalBlue;
+}
+
+
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+
+</style>
+</head>
+<body bgcolor="#444444">
+
+<div class="header">
+
+    <div class="header-left">
+              <img src="static/logo_CENAPRED.png" class="logos">
+    <img src="static/lanot_logo.png" class="logos">
+    </div>
+
+  <a href="#default" class="logo">Generador de reporte satélital</a>
+
+  <div class="header-right">
+
+
+    <a class="btn" href="/"><i class="fa fa-home"></i></a>
+    <a id="myBtn"><i class="fa fa-info"></i></a>
+
+  </div>
+</div>
+
+<h2 style="color:white;font-weight: bold;">Imágenes Sentinel-2/MSI</h2>
+
+<div id="map"></div>
+
+<div class="form">
+<form method="post" action="/ReporteSentinel2">
+    <p style="color:white;">Longitud: <input type="number" step="any" name ="lon" id="lon" value="lon"></p>
+  <p style="color:white;">Latitud: <input type="number" step="any" name ="lat" id="lat" value="lat"></p>
+  <p style="color:white;">Cuadrante: <input type="number" step="any" name ="offset" id="offset" value="0.05"></p>
+  <select name="composite" id="composite" type="text">
+      <option value="1-NATURAL-COLOR,DATE">True Color</option>
+      <option value="2_COLOR_INFRARED__VEGETATION_,DATE">False Color</option>
+      <option value="91_SWIR,DATE">SWIR</option>
+      <option value="5_VEGETATION_INDEX,DATE">NDVI</option>
+  </select>  
+    <input type="submit" class="button"  id="send-signup" name="signup" value="Enviar">
+  
+</form>
+<button type="button" class="button" >
+  <a id="download" style="color: white" href="static/{{image}}" download="static/{{image}}">Descargar</a>
+</button>
+<a href="static/{{image}}">
+<img class = 'image_1' src="static/{{image}}" >
+</a>
+</div>
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Generador de reporte satélital LANOT-CENAPRED</p>
+    <p>Contacto:</p>
+    <p>Ing. Uriel Mendoza</p>
+    <p>urielmendozacastillo@gmail.com</p>
+    <p>GitHub</p>
+    <a href="https://github.com/urielzan/LANOT/tree/master/Incendios_Dinamicos">https://github.com/urielzan/LANOT/tree/master/Incendios_Dinamicos</a>
+
+  </div>
+
+</div>
+
+
+<script>
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+
+
+  
+
+
+<script>
+
+  // initialize the map
+  var map = L.map('map').setView([22, -102], 5);
+
+  // load a tile layer
+var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors,<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',
+    
+    esri_wiAttr = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+    esri_wiUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+
+    esri_OceanAttr = 'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri',
+    esri_OceanUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}' ,
+
+    openStreetMapAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    openStreetMapUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+
+    stamenTerrainAttr = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    stamenTerrainUrl = 'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}',
+
+    cartoDB_DarkAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    cartoDB_DarkUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+
+    nasaGIBS_ViirsAttr = 'Imagery provided by services from the Global Imagery Browse Services (GIBS), operated by the NASA/GSFC/Earth Science Data and Information System (<a href="https://earthdata.nasa.gov">ESDIS</a>) with funding provided by NASA/HQ.',
+    nasaGIBS_ViirsUrl = 'https://map1.vis.earthdata.nasa.gov/wmts-webmerc/VIIRS_CityLights_2012/default/{time}/{tilematrixset}{maxZoom}/{z}/{y}/{x}.{format}';
+
+
+var mbGrayscale   = L.tileLayer(mbUrl, {id: 'mapbox.light', attribution: mbAttr,edgeBufferTiles: 1,label:'MapBox Light'}),
+    mbStreets  = L.tileLayer(mbUrl, {id: 'mapbox.streets',   attribution: mbAttr,edgeBufferTiles: 1,label:'MapBox Streets'}),
+    esri_wi  = L.tileLayer(esri_wiUrl, {attribution: esri_wiAttr,edgeBufferTiles: 1,label:'ESRI World Imagery'}),
+    esri_Ocean  = L.tileLayer(esri_OceanUrl, {attribution: esri_OceanAttr,edgeBufferTiles: 1,label:'ESRI Ocean'}),
+    openStreetMap = L.tileLayer(openStreetMapUrl, {attribution: openStreetMapAttr,edgeBufferTiles: 1,label:'OpenStreetMap'}),
+    stamenTerrain = L.tileLayer(stamenTerrainUrl, {subdomains:'abcd',ext:'png',attribution: stamenTerrainAttr,edgeBufferTiles: 1,label:'Stamen Terrain'}),
+    cartoDB_Dark = L.tileLayer(cartoDB_DarkUrl, {subdomains:'abcd',attribution: cartoDB_DarkAttr,edgeBufferTiles: 1,label:'CartoDB Dark'}),
+    nasaGIBS_Viirs = L.tileLayer(nasaGIBS_ViirsUrl, {bounds: [[-85.0511287776, -179.999999975], [85.0511287776, 179.999999975]],minZoom: 1,maxZoom: 8,format: 'jpg',time: '',tilematrixset: 'GoogleMapsCompatible_Level',edgeBufferTiles: 1,label:'NASA GIBS VIIRS CityLights 2012'});
+
+mbGrayscale.addTo(map)
+
+var puntos = L.tileLayer.wms("http://132.247.103.184/terrama2q/geoserver/terrama2_53/wms",{
+          layers: 'terrama2_53:view53',
+          format: 'image/png',
+          transparent: true,
+          version: '1.1.0',
+          attribution: "terrama2q"        
+        });
+        puntos.addTo(map);
+
+var baseLayers = {
+        "ESRI WorldImagery":esri_wi,
+        "MapBox Streets":mbStreets,
+        "MapBox Gray":mbGrayscale,
+        "ESRI Ocean":esri_Ocean,
+        "Open Street Map":openStreetMap,
+        "Satmen Terrain":stamenTerrain,
+        "CartoDB Dark":cartoDB_Dark,
+        "NASAGIBS CityVIIRS":nasaGIBS_Viirs,
+        };
+        
+        var overlays = {
+          "Incendios tiempo real": puntos
+        };
+                
+        L.control.layers(baseLayers, overlays).addTo(map);
+
+  var lat = 19;
+  var lon = 99;
+
+  function clickEvent(e) {
+
+          if (typeof(newMarker)==='undefined'){
+              newMarker = new L.marker(e.latlng, { draggable: true });
+              newMarker.addTo(map);}
+          else { newMarker.setLatLng(e.latlng);}
+
+
+          lat = e.latlng.lat;
+          lon = e.latlng.lng;
+          document.getElementById("lat").value = lat;
+          document.getElementById("lon").value = lon;
+          console.log(lat + " Inside");
+          now();
+  }
+
+  map.on('click', clickEvent);
+  console.log(lat + " Global");
+
+  function now(){
+      console.log(lat + " Global after click");
+  }
+
+
+
+</script>
+
+</body>
+</html>
+
+
